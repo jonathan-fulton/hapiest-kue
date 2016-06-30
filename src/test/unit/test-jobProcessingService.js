@@ -32,33 +32,51 @@ describe('JobProcessingFactory', function() {
 
     describe('registerJobProcessor', function() {
 
-        it('Should process two email jobs', function() {
-            const jobIdsToProcess = [];
-            const jobsProcessed = [];
+        it('Should process two email jobs and four ping jobs', function() {
+            const emailJobsProcessed = [];
+            const pingJobsProcessed = [];
             return Promise.resolve()
                 .then(() => creationService.createJob('email', {email: 'john.doe@gmail.com', body:'Hello, world!'}, {priority: 'high', ttlInMs: 1000}))
-                .then(job => jobIdsToProcess.push(job.id))
                 .then(() => creationService.createJob('email', {email: 'jane.doe@gmail.com', body:'Oh no!'}, {ttlInMs: 1000}))
-                .then(job => jobIdsToProcess.push(job.id))
+                .then(() => creationService.createJob('ping', {ip: '127.0.0.1'}, {ttlInMs: 1000}))
+                .then(() => creationService.createJob('ping', {ip: '127.0.0.2'}, {ttlInMs: 1000, priority: 'low'}))
+                .then(() => creationService.createJob('ping', {ip: '127.0.0.3'}, {ttlInMs: 1000, priority: 'low'}))
+                .then(() => creationService.createJob('ping', {ip: '127.0.0.4'}, {ttlInMs: 1000}))
                 .then(() => {
-                    return new Promise((resolve) => {
-                        processingService.registerJobProcessor('email', (jobId, data) => {
-                            jobsProcessed.push({
-                                jobId: jobId,
-                                data: data
-                            });
-                            return Promise.resolve(true);
-                        }, 1);
-                        setTimeout(() => resolve(), 1000); // Give it 1 second to process stuff
+                    processingService.registerJobProcessor('email', (jobId, data) => {
+                        emailJobsProcessed.push({
+                            jobId: jobId,
+                            data: data
+                        });
+                        return Promise.resolve(true);
+                    }, 1);
+
+                    processingService.registerJobProcessor('ping', (jobId, data) => {
+                        pingJobsProcessed.push({
+                            jobId: jobId,
+                            data: data
+                        });
+                        return Promise.resolve(true);
+                    }, 4);
+                })
+                .then(() => {
+                    return new Promise(resolve => {
+                        setTimeout(() => resolve(), 1000); // Give it 1 second to process stuff)
                     });
                 })
                 .then(() => {
-                    jobsProcessed.length.should.eql(2);
-                    jobsProcessed[0].jobId.should.be.lessThan(jobsProcessed[1].jobId);
-                    jobsProcessed[0].data.email.should.eql('john.doe@gmail.com');
-                    jobsProcessed[0].data.body.should.eql('Hello, world!');
-                    jobsProcessed[1].data.email.should.eql('jane.doe@gmail.com');
-                    jobsProcessed[1].data.body.should.eql('Oh no!');
+                    emailJobsProcessed.length.should.eql(2);
+                    emailJobsProcessed[0].jobId.should.be.lessThan(emailJobsProcessed[1].jobId);
+                    emailJobsProcessed[0].data.email.should.eql('john.doe@gmail.com');
+                    emailJobsProcessed[0].data.body.should.eql('Hello, world!');
+                    emailJobsProcessed[1].data.email.should.eql('jane.doe@gmail.com');
+                    emailJobsProcessed[1].data.body.should.eql('Oh no!');
+
+                    pingJobsProcessed.length.should.eql(4);
+                    pingJobsProcessed[0].data.ip.should.eql('127.0.0.1');
+                    pingJobsProcessed[1].data.ip.should.eql('127.0.0.4');
+                    pingJobsProcessed[2].data.ip.should.eql('127.0.0.2');
+                    pingJobsProcessed[3].data.ip.should.eql('127.0.0.3');
                 })
         })
 
