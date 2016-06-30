@@ -6,7 +6,7 @@ const JobProcessingService = require('./jobProcessingService');
 class JobProcessingServiceFactory {
 
     /**
-     * Config should match kue documentation for options as it's passed in directly to kue.createQueue()
+     * Config should match kue documentation for options as it's passed in directly to kue.createFromConfig()
      *
      * @param {Config} nodeConfig
      * @param {string} nodeConfigPath
@@ -14,7 +14,7 @@ class JobProcessingServiceFactory {
      * @returns {JobProcessingService}
      */
     static createFromNodeConfig(nodeConfig, nodeConfigPath, logger) {
-        const queue = QueueFactory.createQueueFromNodeConfig(nodeConfig, nodeConfigPath);
+        const queue = QueueFactory.createFromNodeConfig(nodeConfig, nodeConfigPath);
         return JobProcessingServiceFactory.create(queue, logger);
     }
 
@@ -24,7 +24,7 @@ class JobProcessingServiceFactory {
      * @returns {JobProcessingService}
      */
     static createFromConfig(config, logger) {
-        const queue = QueueFactory.createQueue(config);
+        const queue = QueueFactory.createFromConfig(config);
         return JobProcessingServiceFactory.create(queue, logger);
     }
 

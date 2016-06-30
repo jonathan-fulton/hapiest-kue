@@ -9,12 +9,12 @@ const QueueFactory = require('../../lib/queueFactory');
 describe('QueueFactory', function() {
 
     beforeEach(() => {
-        // kue.createQueue leverages a singleton underneath the hood
+        // kue.createFromConfig leverages a singleton underneath the hood
         // To test creating Queue's with different settings, we need to null out the singleton to allow re-create
         Kue.singleton = null;
     });
 
-    describe('createQueue', function() {
+    describe('createFromConfig', function() {
 
         it('Should create a basic Kue Queue that connects to redis on 192.168.99.100:6379', function() {
 
@@ -30,7 +30,7 @@ describe('QueueFactory', function() {
                 }
             };
 
-            const queue = QueueFactory.createQueue(config);
+            const queue = QueueFactory.createFromConfig(config);
 
             Should.exist(queue);
             queue.should.have.property('create');
@@ -44,7 +44,7 @@ describe('QueueFactory', function() {
 
     });
 
-    describe('createQueueFromNodeConfig', function() {
+    describe('createFromNodeConfig', function() {
 
         it('Should create a basic Kue Queue that connects to redis on 192.168.99.100:6379', function() {
 
@@ -52,7 +52,7 @@ describe('QueueFactory', function() {
             console.log('Test 2');
             console.log(JSON.parse(JSON.stringify(nodeConfig.get('someQueueConfig'))));
             console.log(nodeConfig.util.getConfigSources());
-            const queue = QueueFactory.createQueueFromNodeConfig(nodeConfig, 'someQueueConfig');
+            const queue = QueueFactory.createFromNodeConfig(nodeConfig, 'someQueueConfig');
 
             Should.exist(queue);
             queue.should.have.property('create');

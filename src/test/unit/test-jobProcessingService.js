@@ -22,7 +22,7 @@ var queue;
 describe('JobProcessingFactory', function() {
 
     beforeEach(() => {
-        // kue.createQueue leverages a singleton underneath the hood
+        // kue.createFromConfig leverages a singleton underneath the hood
         // To test creating Queue's with different settings, we need to null out the singleton to allow re-create
         Kue.singleton = null;
 

@@ -5,22 +5,22 @@ const Kue = require('kue');
 class QueueFactory {
 
     /**
-     * Config should match kue documentation for options as it's passed in directly to kue.createQueue()
+     * Config should match kue documentation for options as it's passed in directly to kue.createFromConfig()
      *
      * @param {Config} nodeConfig
      * @param {string} nodeConfigPath
      * @returns {Queue}
      */
-    static createQueueFromNodeConfig(nodeConfig, nodeConfigPath) {
+    static createFromNodeConfig(nodeConfig, nodeConfigPath) {
         const config = nodeConfig.get(nodeConfigPath);
-        return QueueFactory.createQueue(config);
+        return QueueFactory.createFromConfig(config);
     }
 
     /**
      * @param {Object} config - refer to kue documentation for options
      * @returns {Queue}
      */
-    static createQueue(config) {
+    static createFromConfig(config) {
         return Kue.createQueue(config);
     }
 
