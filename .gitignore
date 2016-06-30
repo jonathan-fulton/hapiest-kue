@@ -1,0 +1,7 @@
+# Operating system files
+*.DS_Store
+
+node_modules
+npm-debug.log
+
+src/config/default.json

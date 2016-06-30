@@ -1,0 +1,12 @@
+version: '2'
+services:
+  node:
+      image: jonathansfulton/hapiest-kue:latest
+      volumes:
+            - ./src:/app/src # Mount local /src folder so we don't have to rebuild image very time we make a change
+      depends_on:
+            - redis
+  redis:
+    image: redis:3.0
+    ports:
+      - "6379:6379"
