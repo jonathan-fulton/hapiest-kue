@@ -25,7 +25,7 @@ class JobProcessingService {
     /**
      * @param jobType
      * @param {JobProcessingFunction} processFunction - (jobId, data) => Promise.<result>
-     * @param {int} concurrency - number of simultaneous jobs that can be running; defaults to 1
+     * @param {int} [concurrency=1] - number of simultaneous jobs that can be running; defaults to 1
      */
     registerJobProcessor(jobType, processFunction, concurrency) {
         this._queue.process(jobType, concurrency || 1, (job, done) => {
@@ -41,6 +41,22 @@ class JobProcessingService {
                     done(err);
                 })
         })
+    }
+
+    /**
+     * @name JobProcessor
+     * @type Object
+     * @property {string} jobType
+     * @property {Function} process - (jobId, data) => Promise.<result>
+     * @property {int} [concurrency=1]
+     */
+
+    /**
+     * @param {JobProcessor} jobProcessor
+     * @returns {Promise.<*>}
+     */
+    registerJobProcessorObject(jobProcessor) {
+        return this.registerJobProcessor(jobProcessor.jobType, jobProcessor.process.bind(jobProcessor), jobProcessor.concurrency);
     }
 
 }

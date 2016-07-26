@@ -1,6 +1,6 @@
 {
   "name": "hapiest-kue",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Simple wrapper for Kue that hooks it up with node-config and provides logical separation between job creation and job processing",
   "main": "index.js",
   "repository": {
@@ -8,7 +8,8 @@
     "url": "https://github.com/jonathan-fulton/hapiest-kue.git"
   },
   "scripts": {
-    "test": "npm run docker:stop && npm run docker:build && npm run docker:start && docker-compose run -e NODE_ENV=test-docker-local -e NODE_CONFIG_DIR=/app/src/config node /app/node_modules/mocha/bin/mocha /app/src/test/unit --recursive",
+    "test": "npm run docker:stop && npm run docker:build && npm run docker:start && npm run test:unit",
+    "test:unit": "docker-compose run -e NODE_ENV=test-docker-local -e NODE_CONFIG_DIR=/app/src/config node /app/node_modules/mocha/bin/mocha /app/src/test/unit --recursive",
     "docker:build": "docker build -f Dockerfile -t jonathansfulton/hapiest-kue:latest .",
     "docker:start": "docker-compose up &",
     "docker:stop": "docker-compose stop"
